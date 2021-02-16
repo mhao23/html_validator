@@ -23,19 +23,19 @@ def validate_html(html):
     # but arbitrary text located between the html tags
     tags = _extract_tags(html)
     stack = []
+    if len(tags) == 0 and '<' in html:
+        return False
     for tag in tags:
         if '/' not in tag:
             stack.append(tag)
         elif len(stack) == 0:
             return False
-        elif '/' not in stack[-1] and '/' in tag and \
-                stack[-1][1:-1] == tag[2:-1]:
+        elif tag[2:] == stack[-1][1:]:
             stack.pop()
-    if len(stack) == 0:
-        return True
-    else:
-        return False
-
+        else:
+            return False
+    print(len(stack))
+    return len(stack) == 0
 
 def _extract_tags(html):
     '''
@@ -51,16 +51,17 @@ def _extract_tags(html):
     ['<strong>', '</strong>']
     '''
     extract = []
-    i = 0
-    while i < len(html):
+
+    for i in range(len(html)):
         if html[i] == '<':
-            for j in range(i, len(html)):
-                if html[j] == '>':
-                    extract.append(html[i:j+1])
-                    i = j + 1
-                    break
-                else:
-                    j += 1
-        else:
-            i += 1
+            tag = ''
+            x = i
+
+            while html[x] != '>':
+                tag += html[x]
+                x += 1
+                if x >= len(html):
+                    return extract
+            tag += '>'
+            extract.append(tag)
     return extract
