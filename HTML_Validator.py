@@ -37,6 +37,7 @@ def validate_html(html):
     print(len(stack))
     return len(stack) == 0
 
+
 def _extract_tags(html):
     '''
     This is a helper function for `validate_html`.
